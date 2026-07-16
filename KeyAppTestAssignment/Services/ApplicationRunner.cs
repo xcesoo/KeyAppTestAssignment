@@ -27,13 +27,11 @@ public class ApplicationRunner : IApplicationRunner
         try
         {
             var packages = (await _scraper.GetAppPackagesAsync(appArgs)).ToList();
-            
-            _logger.LogInformation("Found {Count} packages", packages.Count());
-
             foreach (var pkg in packages)
             {
                 Console.WriteLine(pkg);
             }
+            _logger.LogInformation("Found {Count} packages", packages.Count());
         }
         catch (ScraperException ex)
         {
