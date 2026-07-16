@@ -13,6 +13,8 @@ builder.Services.AddHttpClient<IGooglePlayScraper, GooglePlayScraper>(client =>
 
 builder.Services.AddTransient<IApplicationRunner, ApplicationRunner>();
 
+builder.Services.AddTransient<IRequestTemplateProvider, RequestTemplateProvider>();
+
 builder.Logging.SetMinimumLevel(LogLevel.Information);
 
 using var app = builder.Build();
