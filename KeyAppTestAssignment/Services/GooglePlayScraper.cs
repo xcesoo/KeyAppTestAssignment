@@ -1,4 +1,3 @@
-using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
 using KeyAppTestAssignment.Exceptions;
 using KeyAppTestAssignment.Interfaces;
@@ -29,49 +28,49 @@ public class GooglePlayScraper : IGooglePlayScraper
     public async Task<IEnumerable<string>> GetAppPackagesAsync(AppArguments arguments)
     {
         _logger.LogInformation("Building HTTP request");
+        
         var url = $"{_baseUrl}/_/PlayStoreUi/data/batchexecute?hl={arguments.Country}";
         
-        string freq = await _requestTemplateProvider.BuildAsync(arguments.Keyword, _baseAndroidId);
-        
-        var content = new FormUrlEncodedContent(
-            [new KeyValuePair<string, string>("f.req", freq)]
-            );
-        
-        HttpResponseMessage response;
+        var freq = await _requestTemplateProvider.BuildAsync(arguments.Keyword, _baseAndroidId);
+    
+        var content = new FormUrlEncodedContent([new KeyValuePair<string, string>("f.req", freq)]);
+    
+        var responseString = await FetchDataAsync(url, content);
+    
+        return ParsePackagesFromResponse(responseString);
+    }
+    
+    private async Task<string> FetchDataAsync(string url, FormUrlEncodedContent content)
+    {
         try
         { 
-            response = await _httpClient.PostAsync(url, content);
+            var response = await _httpClient.PostAsync(url, content);
             response.EnsureSuccessStatusCode();
+        
+            _logger.LogInformation("Successfully received response");
+            return await response.Content.ReadAsStringAsync();
         }
         catch (HttpRequestException ex)
         {
             throw new ScraperException($"Network error while calling Google Play API: {ex.Message}", ex);
         }
-        
-        var responseString = await response.Content.ReadAsStringAsync();
-        _logger.LogInformation("Successfully received response");
-        
-        return ParsePackagesFromResponse(responseString);
     }
 
     private IEnumerable<string> ParsePackagesFromResponse(string responseText)
     {
         var regex = new Regex(@"(?<=\\\"")[A-Za-z][A-Za-z0-9_]*(?:\.[A-Za-z0-9_]+)+(?=\\\"")", RegexOptions.Compiled);
-        var matches = regex.Matches(responseText);
-        var packages = new HashSet<string>();
-
-        foreach (Match match in matches)
-        {
-            if (!match.Success)
-                continue;
-
-            packages.Add(match.Value);
-        }
+        
+        var packages = regex.Matches(responseText)
+            .Where(m => m.Success)
+            .Select(m => m.Value)
+            .Distinct()
+            .ToList();
         
         if (!packages.Any())
         {
             throw new ScraperException("Could not find any package names in the response.");
         }
+        
         return packages;
     }
 }

@@ -1,4 +1,3 @@
-using KeyAppTestAssignment.Models;
 
 namespace KeyAppTestAssignment.Interfaces;
 

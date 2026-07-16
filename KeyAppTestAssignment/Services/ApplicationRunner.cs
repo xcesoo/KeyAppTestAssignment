@@ -20,6 +20,7 @@ public class ApplicationRunner : IApplicationRunner
     public async Task RunAsync(string[] args)
     { 
         if (!CheckArgs(args)) return;
+        
         var appArgs = new AppArguments(args[0], args[1]);
         
         _logger.LogInformation("Searching for packages by keyword: <{AppArgsKeyword}> in region: <{AppArgsCountry}>", appArgs.Keyword, appArgs.Country);
