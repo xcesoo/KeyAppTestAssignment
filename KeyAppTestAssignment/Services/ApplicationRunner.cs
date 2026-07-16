@@ -32,11 +32,20 @@ public class ApplicationRunner : IApplicationRunner
             {
                 Console.WriteLine(pkg);
             }
+
             _logger.LogInformation("Found {Count} packages", packages.Count());
         }
         catch (ScraperException ex)
         {
             _logger.LogError(ex, "Scraper exception: {Message}", ex.Message);
+        }
+        catch (FileNotFoundException ex)
+        {
+            _logger.LogError(ex, "File not found: {Message}", ex.Message);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "{Message}", ex.Message);
         }
         catch (Exception ex)
         {
