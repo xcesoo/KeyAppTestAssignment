@@ -1,6 +1,6 @@
 namespace KeyAppTestAssignment.Exceptions;
 
-public class ScraperException
+public class ScraperException : Exception
 {
     
 }
