@@ -1,6 +1,8 @@
+using KeyAppTestAssignment.Interfaces;
+
 namespace KeyAppTestAssignment.Services;
 
-public class GooglePlayScraper
+public class GooglePlayScraper : IGooglePlayScraper
 {
     
 }

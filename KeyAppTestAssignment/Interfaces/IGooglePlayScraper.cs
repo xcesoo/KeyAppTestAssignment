@@ -1,4 +1,4 @@
-namespace KeyAppTestAssignment.Services;
+namespace KeyAppTestAssignment.Interfaces;
 
 public interface IGooglePlayScraper
 {
