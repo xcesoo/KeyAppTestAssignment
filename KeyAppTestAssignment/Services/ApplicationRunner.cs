@@ -47,6 +47,10 @@ public class ApplicationRunner : IApplicationRunner
         {
             _logger.LogError(ex, "{Message}", ex.Message);
         }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "{Message}", ex.Message);
+        }
         catch (Exception ex)
         {
             _logger.LogCritical(ex, "Critical error: {Message}", ex.Message);
